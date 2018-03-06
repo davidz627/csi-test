@@ -156,6 +156,10 @@ func (s *service) ControllerUnpublishVolume(
 	s.volsRWL.Lock()
 	defer s.volsRWL.Unlock()
 
+	if len(req.GetVolumeId()) == 0 {
+		return nil, status.Error(codes.InvalidArgument, fmt.Sprintf("Expected a volume ID, got none"))
+	}
+
 	i, v := s.findVolNoLock("id", req.VolumeId)
 	if i < 0 {
 		return nil, status.Error(codes.NotFound, req.VolumeId)

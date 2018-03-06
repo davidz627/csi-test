@@ -31,19 +31,21 @@ import (
 )
 
 var (
-	driverAddress string
-	csiTargetPath string
-	conn          *grpc.ClientConn
-	lock          sync.Mutex
+	driverAddress     string
+	csiTargetPath     string
+	stagingTargetPath string
+	conn              *grpc.ClientConn
+	lock              sync.Mutex
 )
 
 // Test will test the CSI driver at the specified address
-func Test(t *testing.T, address, mountPoint string) {
+func Test(t *testing.T, address, mountPoint, stagePoint string) {
 	lock.Lock()
 	defer lock.Unlock()
 
 	driverAddress = address
 	csiTargetPath = mountPoint
+	stagingTargetPath = stagePoint
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CSI Driver Test Suite")
 }

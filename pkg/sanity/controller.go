@@ -34,7 +34,7 @@ func verifyVolumeInfo(v *csi.Volume) {
 	Expect(v.GetId()).NotTo(BeEmpty())
 }
 
-func isCapabilitySupported(
+func isControllerCapabilitySupported(
 	c csi.ControllerClient,
 	capType csi.ControllerServiceCapability_RPC_Type,
 ) bool {
@@ -97,7 +97,7 @@ var _ = Describe("GetCapacity [Controller Server]", func() {
 	BeforeEach(func() {
 		c = csi.NewControllerClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_GET_CAPACITY) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_GET_CAPACITY) {
 			Skip("GetCapacity not supported")
 		}
 	})
@@ -121,7 +121,7 @@ var _ = Describe("ListVolumes [Controller Server]", func() {
 	BeforeEach(func() {
 		c = csi.NewControllerClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_LIST_VOLUMES) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_LIST_VOLUMES) {
 			Skip("ListVolumes not supported")
 		}
 	})
@@ -152,7 +152,7 @@ var _ = Describe("CreateVolume [Controller Server]", func() {
 	BeforeEach(func() {
 		c = csi.NewControllerClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_CREATE_DELETE_VOLUME) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_CREATE_DELETE_VOLUME) {
 			Skip("CreateVolume not supported")
 		}
 	})
@@ -217,11 +217,11 @@ var _ = Describe("CreateVolume [Controller Server]", func() {
 	})
 
 	// Pending fix in mock file
-	It("should return appropriate values SingleNodeWriter WithCapacity 1Gi Type:Mount", func() {
+	It("should return appropriate values SingleNodeWriter WithCapacity 10Gi Type:Mount", func() {
 
 		By("creating a volume")
 		name := "sanity"
-		size := int64(1 * 1024 * 1024 * 1024)
+		size := int64(10 * 1024 * 1024 * 1024)
 		vol, err := c.CreateVolume(
 			context.Background(),
 			&csi.CreateVolumeRequest{
@@ -264,7 +264,7 @@ var _ = Describe("DeleteVolume [Controller Server]", func() {
 	BeforeEach(func() {
 		c = csi.NewControllerClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_CREATE_DELETE_VOLUME) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_CREATE_DELETE_VOLUME) {
 			Skip("DeleteVolume not supported")
 		}
 	})
@@ -430,7 +430,7 @@ var _ = Describe("ControllerPublishVolume [Controller Server]", func() {
 		c = csi.NewControllerClient(conn)
 		n = csi.NewNodeClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_PUBLISH_UNPUBLISH_VOLUME) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_PUBLISH_UNPUBLISH_VOLUME) {
 			Skip("ControllerPublishVolume not supported")
 		}
 	})
@@ -560,7 +560,7 @@ var _ = Describe("ControllerUnpublishVolume [Controller Server]", func() {
 		c = csi.NewControllerClient(conn)
 		n = csi.NewNodeClient(conn)
 
-		if !isCapabilitySupported(c, csi.ControllerServiceCapability_RPC_PUBLISH_UNPUBLISH_VOLUME) {
+		if !isControllerCapabilitySupported(c, csi.ControllerServiceCapability_RPC_PUBLISH_UNPUBLISH_VOLUME) {
 			Skip("ControllerUnpublishVolume not supported")
 		}
 	})
@@ -574,7 +574,7 @@ var _ = Describe("ControllerUnpublishVolume [Controller Server]", func() {
 
 		serverError, ok := status.FromError(err)
 		Expect(ok).To(BeTrue())
-		Expect(serverError.Code()).To(Equal(codes.NotFound))
+		Expect(serverError.Code()).To(Equal(codes.InvalidArgument))
 	})
 
 	It("should return appropriate values (no optional values added)", func() {
