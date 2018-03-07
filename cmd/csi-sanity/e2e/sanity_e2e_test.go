@@ -21,7 +21,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kubernetes-csi/csi-test/pkg/sanity"
+	e2e "github.com/kubernetes-csi/csi-test/pkg/sanity-e2e"
 )
 
 const (
@@ -42,7 +42,7 @@ func init() {
 	flag.Parse()
 }
 
-func TestSanity(t *testing.T) {
+func TestE2ESanity(t *testing.T) {
 	if version {
 		fmt.Printf("Version = %s\n", VERSION)
 		return
@@ -50,5 +50,5 @@ func TestSanity(t *testing.T) {
 	if len(endpoint) == 0 {
 		t.Fatalf("--%sendpoint must be provided with an CSI endpoint", prefix)
 	}
-	sanity.Test(t, endpoint, mountPoint, "")
+	e2e.Test(t, endpoint, mountPoint, "")
 }
